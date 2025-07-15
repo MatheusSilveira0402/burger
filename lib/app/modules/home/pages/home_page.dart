@@ -41,6 +41,17 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
+      floatingActionButton: store.productsBuy.isNotEmpty
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Modular.to.pushNamed('/car');
+              },
+              icon: const Icon(Icons.shopping_cart),
+              label: Text(
+                '${store.productsBuy.length} item(s) • R\$ ${store.productsBuy.fold(0.0, (sum, e) => sum + e.price).toStringAsFixed(2)}',
+              ),
+            )
+          : null,
     );
   }
 }

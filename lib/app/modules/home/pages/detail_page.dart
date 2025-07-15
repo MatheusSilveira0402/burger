@@ -6,13 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
 
   @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  late ProductProvider store;
+  late ItemModel product;
+
+  @override
+  void initState() {
+    super.initState();
+    store = context.read<ProductProvider>();
+    product = Modular.args.data;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ProductProvider store = context.watch<ProductProvider>();
-    final ItemModel product = Modular.args.data;
     return Scaffold(
       body: SizedBox(
         width: context.widthPct(1),
@@ -22,7 +35,7 @@ class DetailPage extends StatelessWidget {
           children: [
             Text(product.name, style: const TextStyle(fontSize: 24)),
             Text('R\$ ${product.price.toStringAsFixed(2)}'),
-            ExtraPage(),
+            const ExtraPage(),
             ElevatedButton(
               onPressed: () {
                 store.addCar(product);

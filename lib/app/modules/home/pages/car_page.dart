@@ -1,4 +1,5 @@
 import 'package:buger/app/core/size/extension_size.dart';
+import 'package:buger/app/models/item_model.dart';
 import 'package:buger/app/modules/home/provider/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -12,19 +13,26 @@ class CarPage extends StatefulWidget {
 
 class _CarPageState extends State<CarPage> {
   late ProductProvider store;
+  late List<ItemModel> products = [];
+  double total = 0.0;
+  double rawTotal = 0.0;
+  double discount = 0.0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     store = context.watch<ProductProvider>();
-    final products = store.productsBuy;
-    double rawTotal = products.fold(0.0, (sum, item) => sum + item.price);
-
-// Verifica se tem pelo menos um item do tipo
+    products = store.productsBuy;
+    rawTotal = products.fold(0.0, (sum, item) => sum + item.price);
+    discount = 0.0;
     bool hasSandwich = products.any((item) => item.type == 'sandwich');
     bool hasFries = products.any((item) => item.name == 'Batata frita');
     bool hasDrink = products.any((item) => item.name == 'Refrigerante');
-
-    double discount = 0.0;
 
     if (hasSandwich && hasFries && hasDrink) {
       discount = 0.20;
@@ -33,26 +41,37 @@ class _CarPageState extends State<CarPage> {
     } else if (hasSandwich && hasFries) {
       discount = 0.10;
     }
-
-    double total = rawTotal * (1 - discount);
+    total = rawTotal * (1 - discount);
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Carrinho'),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Modular.to.navigate('/');
+          },
+        ),
+        excludeHeaderSemantics: false,
+      ),
       body: SizedBox(
         width: context.widthPct(1),
-        child: products.isEmpty
+        child: store.loading
             ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final item = products[index];
-                  return ListTile(
-                    title: Text(item.name),
-                    subtitle: Text('R\$ ${item.price.toStringAsFixed(2)}'),
-                    onTap: () {
-                      store.removeCar(item);
+            : products.isEmpty
+                ? const Center(child: Text('Nenhum item no carrinho'))
+                : ListView.builder(
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final item = products[index];
+                      return ListTile(
+                        title: Text(item.name),
+                        subtitle: Text('R\$ ${item.price.toStringAsFixed(2)}'),
+                        onTap: () {
+                          store.removeCar(item);
+                        },
+                      );
                     },
-                  );
-                },
-              ),
+                  ),
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
@@ -80,17 +99,17 @@ class _CarPageState extends State<CarPage> {
                       final name = controller.text.trim();
                       if (name.isEmpty) return;
 
-                      // Aqui você pode salvar o pedido no banco se quiser
-
                       store.clearCart(); // limpa carrinho
                       Navigator.pop(context); // fecha modal
-                      Modular.to.pushNamed('/');
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                              'Pagamento de R\$ ${total.toStringAsFixed(2)} confirmado para $name!'),
+                            'Pagamento confirmado!\nOriginal: R\$ ${rawTotal.toStringAsFixed(2)}\nDesconto: ${(discount * 100).toInt()}%\nTotal: R\$ ${total.toStringAsFixed(2)}',
+                          ),
                         ),
                       );
+                      Modular.to.navigate('/');
                     },
                     child: const Text('Confirmar pagamento'),
                   ),
@@ -107,7 +126,9 @@ class _CarPageState extends State<CarPage> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            'Total: R\$ ${total.toStringAsFixed(2)}',
+            discount > 0
+                ? 'Total: R\$ ${total.toStringAsFixed(2)} (${(discount * 100).toInt()}% off)'
+                : 'Total: R\$ ${total.toStringAsFixed(2)}',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
