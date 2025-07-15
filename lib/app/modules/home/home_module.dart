@@ -1,4 +1,4 @@
-import 'package:buger/app/modules/home/pages/car_page.dart';
+import 'package:buger/app/modules/home/pages/cart_page.dart';
 import 'package:buger/app/modules/home/pages/detail_page.dart';
 import 'package:buger/app/modules/home/provider/product_provider.dart';
 import 'package:flutter_modular/flutter_modular.dart';

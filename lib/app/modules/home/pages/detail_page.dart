@@ -5,7 +5,6 @@ import 'package:buger/app/modules/home/provider/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
-
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key});
 
@@ -27,23 +26,76 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        width: context.widthPct(1),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(product.name, style: const TextStyle(fontSize: 24)),
-            Text('R\$ ${product.price.toStringAsFixed(2)}'),
-            const ExtraPage(),
-            ElevatedButton(
-              onPressed: () {
-                store.addCar(product);
-                Modular.to.pushNamed('/car');
-              },
-              child: const Text('Adicionar ao carrinho'),
-            ),
-          ],
+      appBar: AppBar(
+        title: const Text('Detalhes do Produto'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Modular.to.pop(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            children: [
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Text(
+                        product.name,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'R\$ ${product.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: context.widthPct(1),
+                height: context.heightPct(0.5),
+                child: const ExtraPage()), // Página com os extras
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    store.addCar(product);
+                    Modular.to.pushNamed('/car');
+                  },
+                  child: const Text(
+                    'Adicionar ao carrinho',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

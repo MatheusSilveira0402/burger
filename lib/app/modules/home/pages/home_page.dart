@@ -1,3 +1,5 @@
+import 'package:buger/app/modules/home/componentes/cart_item_title.dart';
+import 'package:buger/app/modules/home/componentes/total_amount_banner.dart';
 import 'package:buger/app/modules/home/provider/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -32,25 +34,11 @@ class _HomePageState extends State<HomePage> {
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final item = products[index];
-                return ListTile(
-                  title: Text(item.name),
-                  subtitle: Text('R\$ ${item.price.toStringAsFixed(2)}'),
-                  onTap: () {
-                    Modular.to.pushNamed('/detail', arguments: item);
-                  },
-                );
+                return CartItemTile(item: item, onChange: () => Modular.to.pushNamed('/detail', arguments: item));
               },
             ),
       floatingActionButton: store.productsBuy.isNotEmpty
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Modular.to.pushNamed('/car');
-              },
-              icon: const Icon(Icons.shopping_cart),
-              label: Text(
-                '${store.productsBuy.length} item(s) • R\$ ${store.productsBuy.fold(0.0, (sum, e) => sum + e.price).toStringAsFixed(2)}',
-              ),
-            )
+          ? TotalAmountBanner(total: store.total, discount: store.discount)
           : null,
     );
   }

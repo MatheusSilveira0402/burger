@@ -6,6 +6,9 @@ class ProductProvider extends ChangeNotifier {
   List<ItemModel> products = [];
   List<ItemModel> productsBuy = [];
   bool loading = false;
+  double rawTotal = 0.0;
+  double discount = 0.0;
+  double total = 0.0;
 
   Future<void> loadProducts() async {
     loading = true;
@@ -44,6 +47,27 @@ class ProductProvider extends ChangeNotifier {
 
   Future<void> clearCart() async {
     productsBuy.clear();
+
+    notifyListeners();
+  }
+
+  Future<void> applyDiscount() async {
+    rawTotal = 0.0;
+    discount = 0.0;
+    total = 0.0;
+    rawTotal = productsBuy.fold(0.0, (sum, item) => sum + item.price);
+    bool hasSandwich = productsBuy.any((item) => item.type == 'sandwich');
+    bool hasFries = productsBuy.any((item) => item.name == 'Batata frita');
+    bool hasDrink = productsBuy.any((item) => item.name == 'Refrigerante');
+
+    if (hasSandwich && hasFries && hasDrink) {
+      discount = 0.20;
+    } else if (hasSandwich && hasDrink) {
+      discount = 0.15;
+    } else if (hasSandwich && hasFries) {
+      discount = 0.10;
+    }
+    total = rawTotal * (1 - discount);
     notifyListeners();
   }
 }
