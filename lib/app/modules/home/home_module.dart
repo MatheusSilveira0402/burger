@@ -1,3 +1,4 @@
+import 'package:buger/app/modules/home/pages/car_page.dart';
 import 'package:buger/app/modules/home/pages/detail_page.dart';
 import 'package:buger/app/modules/home/provider/product_provider.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -13,5 +14,6 @@ class HomeModule extends Module {
   void routes(RouteManager r) {
     r.child('/', child: (_) => const HomePage());
     r.child('/detail', child: (_) => const DetailPage());
+    r.child('/car', child: (_) => const CarPage());
   }
 }

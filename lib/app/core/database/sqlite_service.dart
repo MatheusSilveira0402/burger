@@ -29,7 +29,8 @@ class SqliteService {
           CREATE TABLE products(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            price REAL NOT NULL
+            price REAL NOT NULL,
+            type TEXT NOT NULL
           )
         ''');
       },
@@ -44,11 +45,11 @@ class SqliteService {
 
     if (count == 0) {
       final products = [
-        {'name': 'X-Burger', 'price': 5.00},
-        {'name': 'X-Egg', 'price': 4.50},
-        {'name': 'X-Bacon', 'price': 7.00},
-        {'name': 'Batata frita', 'price': 2.00},
-        {'name': 'Refrigerante', 'price': 2.50},
+        {'name': 'X-Burger', 'price': 5.00, 'type': 'sandwich'},
+        {'name': 'X-Egg', 'price': 4.50, 'type': 'sandwich'},
+        {'name': 'X-Bacon', 'price': 7.00, 'type': 'sandwich'},
+        {'name': 'Batata frita', 'price': 2.00, 'type': 'extra'},
+        {'name': 'Refrigerante', 'price': 2.50, 'type': 'extra'},
       ];
 
       for (var product in products) {

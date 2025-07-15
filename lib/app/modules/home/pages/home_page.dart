@@ -21,7 +21,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     store = context.watch<ProductProvider>();
-    final products = store.products;
+
+    final products = store.products.where((item) => item.type == 'sandwich').toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Bom Hambúrguer')),
